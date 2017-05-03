@@ -45,7 +45,7 @@
 
 #ifndef __CPU_SIMPLE_BASE_HH__
 #define __CPU_SIMPLE_BASE_HH__
-
+#include "arch/registers.hh"
 #include "base/statistics.hh"
 #include "config/the_isa.hh"
 #include "cpu/base.hh"
@@ -60,6 +60,9 @@
 #include "sim/eventq.hh"
 #include "sim/full_system.hh"
 #include "sim/system.hh"
+/* by shen */
+#include <map>
+#include <iostream>
 
 // forward declarations
 class Checkpoint;
@@ -186,17 +189,54 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
     Counter startNumOp;
     Stats::Scalar numOps;
 
+    /* by shen */
+    /// Logical register index type.
+    typedef TheISA::RegIndex RegIndex;
+    std::map<RegIndex, int> regDepDelay;
+#define EXE_DELAY   1
+#define MAX_INST_NUM    1024
+    Stats::SparseHistogram depDelayDistr;
+    int instLength;
+
     void countInst()
     {
         if (!curStaticInst->isMicroop() || curStaticInst->isLastMicroop()) {
             numInst++;
             numInsts++;
+            ++instLength;
         }
         numOp++;
         numOps++;
 
         system->totalNumInsts++;
         thread->funcExeInst++;
+
+        /* clean the content every MAX_INST_NUM instructions */
+        if (instLength == MAX_INST_NUM) {
+            regDepDelay.clear();
+            instLength = 0;
+        }
+
+        int maxDel = 0;
+        /* look for src-dest reg dependences */
+        for (int i = 0; i < curStaticInst->numSrcRegs(); ++i) {
+            const int & delay = regDepDelay[curStaticInst->srcRegIdx(i)];
+            if (delay) {
+                /* find maximum delay of all dependency path */
+                if (delay > maxDel)
+                    maxDel = delay;
+            }
+        }
+        /* calculate dependence delay distribution */
+        if (maxDel)
+            depDelayDistr.sample(maxDel);
+        
+        //std::cout << regDepDelay.size() << " ";
+
+        /* calculate delay of dest reg of this inst */
+        for (int i = 0; i < curStaticInst->numDestRegs(); ++i) {
+            regDepDelay[curStaticInst->destRegIdx(i)] = maxDel + EXE_DELAY;
+        }
     }
 
     virtual Counter totalInsts() const

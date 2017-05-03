@@ -89,7 +89,7 @@ BaseSimpleCPU::BaseSimpleCPU(BaseSimpleCPUParams *p)
     : BaseCPU(p),
       branchPred(p->branchPred),
       traceData(NULL), thread(NULL), _status(Idle), interval_stats(false),
-      inst()
+      inst(), instLength(0) /* by shen */
 {
     if (FullSystem)
         thread = new SimpleThread(this, 0, p->system, p->itb, p->dtb,
@@ -147,6 +147,13 @@ BaseSimpleCPU::regStats()
     using namespace Stats;
 
     BaseCPU::regStats();
+
+    /* dependence delay distribution, by shen */
+    depDelayDistr
+        .init(0)
+        .name(name() + ".depDelayDistr")
+        .desc("dependence delay distribution of instruction stream")
+        .flags(nozero);
 
     numInsts
         .name(name() + ".committedInsts")

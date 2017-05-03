@@ -411,6 +411,11 @@ class DefaultIEW
     /** Maximum size of the skid buffer. */
     unsigned skidBufferMax;
 
+    /* IPC under pipeline steady state, by shen */
+    Stats::Formula ipcSteady;
+    /* stall cycles due to full resource of hardware, by shen */
+    Stats::Scalar hardwareFullCycles;
+
     /** Stat for total number of idle cycles. */
     Stats::Scalar iewIdleCycles;
     /** Stat for total number of squashing cycles. */

@@ -344,7 +344,7 @@ Cache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
             blk ? "hit " + blk->print() : "miss");
 
     /* this is for d-cache, by shen */
-    if (blk && name() == "system.cpu.dcache") {
+    if (blk != NULL && name() == "system.cpu.dcache") {
         int setIdx = blk->set;
         /* statistic the distribution of set accesses */
         setDistr.sample(setIdx);

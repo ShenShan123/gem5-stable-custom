@@ -39,6 +39,8 @@
 #include "params/FUDesc.hh"
 #include "params/OpDesc.hh"
 #include "sim/sim_object.hh"
+/* by shen */
+#include "fu_pool.hh"
 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -84,9 +86,11 @@ typedef std::vector<FUDesc *>::const_iterator FUDDiterator;
 class FuncUnit
 {
   private:
-    unsigned opLatencies[Num_OpClasses];
+    /* change to static,  by shen */
+    static unsigned opLatencies[Num_OpClasses];
     bool pipelined[Num_OpClasses];
     std::bitset<Num_OpClasses> capabilityList;
+    friend class FUPool;
 
   public:
     FuncUnit();
@@ -102,5 +106,7 @@ class FuncUnit
     unsigned &opLatency(OpClass capability);
     bool isPipelined(OpClass capability);
 };
+
+unsigned FuncUnit::opLatencies[Num_OpClasses];
 
 #endif // __FU_POOL_HH__

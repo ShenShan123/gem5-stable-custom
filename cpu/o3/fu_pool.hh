@@ -53,6 +53,9 @@
 #include "params/FUPool.hh"
 #include "sim/sim_object.hh"
 
+/* by shen */
+#include <iostream>
+
 class FUDesc;
 class FuncUnit;
 

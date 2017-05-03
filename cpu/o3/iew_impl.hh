@@ -298,6 +298,18 @@ DefaultIEW<Impl>::regStats()
         .desc("insts written-back per cycle")
         .flags(total);
     wbRate = writebackCount / cpu->numCycles;
+
+    /* stall cycles due to full resource of hardware, by shen */
+    hardwareFullCycles
+        .name(name() + "hardwareFullCycles")
+        .desc("stall cycles due to full resource of hardware");
+
+    /* IPC steady, by shen */
+    ipcSteady
+        .name(name() + ".ipcSteady")
+        .desc("IPC under steady state without hardware contention");
+
+    ipcSteady = iewDispatchedInsts / (cpu->numCycles - iewBlockCycles - iewSquashCycles - hardwareFullCycles);
 }
 
 template<class Impl>
@@ -906,13 +918,19 @@ DefaultIEW<Impl>::dispatch(ThreadID tid)
     //     buffer any instructions coming from rename
     //     continue trying to empty skid buffer
     //     check if stall conditions have passed
+    bool stall = false; /* by shen */
 
     if (dispatchStatus[tid] == Blocked) {
         ++iewBlockCycles;
-
+        stall = true;
     } else if (dispatchStatus[tid] == Squashing) {
         ++iewSquashCycles;
+        stall = true;
     }
+
+    /* count stall cycles due to full resource of hardware, by shen */
+    if (stall && (instQueue.isFull(tid) || ldstQueue.lqFull(tid) || ldstQueue.sqFull(tid)))
+        ++hardwareFullCycles;
 
     // Dispatch should try to dispatch as many instructions as its bandwidth
     // will allow, as long as it is not currently blocked.

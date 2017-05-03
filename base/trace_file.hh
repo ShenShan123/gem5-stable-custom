@@ -26,6 +26,6 @@ public:
 static TraceFile traceFile;
 /* enable trace file output */
 //#define TRACE
-#define R_TRACE
+//#define R_TRACE
 
 #endif

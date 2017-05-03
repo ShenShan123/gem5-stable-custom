@@ -45,6 +45,8 @@
 #include "cpu/static_inst_fwd.hh"
 #include "cpu/thread_context.hh"
 #include "enums/StaticInstFlags.hh"
+/* by shen */
+//#include "cpu/func_unit.hh"
 
 // forward declarations
 class Packet;
@@ -181,6 +183,9 @@ class StaticInst : public RefCounted, public StaticInstFlags
 
     /// Operation class.  Used to select appropriate function unit in issue.
     OpClass opClass()     const { return _opClass; }
+
+    /* get latency of this instruction, by shen */
+    //unsigned & opLatency(OpClass & opClass) const { return FuncUnit::opLatencies[opClass]; }
 
 
     /// Return logical index (architectural reg num) of i'th destination reg.
