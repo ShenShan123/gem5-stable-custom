@@ -75,7 +75,7 @@ FUPool::~FUPool()
     fuListIterator i = funcUnits.begin();
 
     for (int f = 0; f < Num_OpClasses; ++f) {
-        std::cout << " class_" << f << "_cycle_" << i->opLatency(f);
+        std::cout << " class_" << f << "_cycle_" << *i->opLatency(f);
     }
     fuListIterator end = funcUnits.end();
     for (; i != end; ++i)
