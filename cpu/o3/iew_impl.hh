@@ -307,9 +307,9 @@ DefaultIEW<Impl>::regStats()
     /* IPC steady, by shen */
     ipcSteady
         .name(name() + ".ipcSteady")
-        .desc("IPC under steady state without hardware contention");
+        .desc("IPC under steady state");
 
-    ipcSteady = iewDispatchedInsts / (cpu->numCycles - iewBlockCycles - iewSquashCycles - hardwareFullCycles);
+    ipcSteady = iewDispatchedInsts / (cpu->numCycles - iewBlockCycles - iewSquashCycles);
 }
 
 template<class Impl>

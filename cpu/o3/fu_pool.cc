@@ -73,10 +73,6 @@ FUPool::FUIdxQueue::getFU()
 FUPool::~FUPool()
 {
     fuListIterator i = funcUnits.begin();
-
-    for (int f = 0; f < Num_OpClasses; ++f) {
-        std::cout << " class_" << f << "_cycle_" << (*i)->opLatency((OpClass)f);
-    }
     fuListIterator end = funcUnits.end();
     for (; i != end; ++i)
         delete *i;
@@ -157,6 +153,11 @@ FUPool::FUPool(const Params *p)
     for (int i = 0; i < numFU; i++) {
         unitBusy[i] = false;
     }
+
+    /* print the option latencies in x86, by shen */
+    /*for (int f = 0; f < Num_OpClasses; ++f) {
+        std::cout << " class_" << f << "_cycle_" << funcUnits[0]->opLatency((OpClass)f);
+    }*/
 }
 
 int

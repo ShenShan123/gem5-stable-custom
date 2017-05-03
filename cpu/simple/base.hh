@@ -193,10 +193,29 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
     /// Logical register index type.
     typedef TheISA::RegIndex RegIndex;
     std::map<RegIndex, int> regDepDelay;
-#define EXE_DELAY   1
-#define MAX_INST_NUM    1024
+#define EXE_DELAY       1
+#define MAX_INST_NUM    512
+#define NUM_OPS         34
     Stats::SparseHistogram depDelayDistr;
     int instLength;
+    /* execution latencies of all type insts */
+    int opLatencies[NUM_OPS];
+    /* init the instruction delay */
+    void initLat()
+    {
+        for (int i = 1; i < NUM_OPS; ++i)
+            opLatencies[i] = 1;
+        /* mem access instruction delay are defined as one-cycle */
+        opLatencies[2 ] = 3;
+        opLatencies[4 ] = 2;
+        opLatencies[5 ] = 2;
+        opLatencies[6 ] = 2;
+        opLatencies[7 ] = 4;
+        opLatencies[8 ] = 12;
+        opLatencies[9 ] = 24;
+        opLatencies[32] = 3;
+        opLatencies[33] = 0; /* a inst prefetch */
+    }
 
     void countInst()
     {
@@ -221,22 +240,17 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
         /* look for src-dest reg dependences */
         for (int i = 0; i < curStaticInst->numSrcRegs(); ++i) {
             const int & delay = regDepDelay[curStaticInst->srcRegIdx(i)];
-            if (delay) {
+            if (delay)
                 /* find maximum delay of all dependency path */
-                if (delay > maxDel)
-                    maxDel = delay;
-            }
+                maxDel = delay > maxDel ? delay : maxDel;
         }
         /* calculate dependence delay distribution */
         if (maxDel)
             depDelayDistr.sample(maxDel);
         
-        //std::cout << regDepDelay.size() << " ";
-
         /* calculate delay of dest reg of this inst */
-        for (int i = 0; i < curStaticInst->numDestRegs(); ++i) {
-            regDepDelay[curStaticInst->destRegIdx(i)] = maxDel + EXE_DELAY;
-        }
+        for (int i = 0; i < curStaticInst->numDestRegs(); ++i)
+            regDepDelay[curStaticInst->destRegIdx(i)] = maxDel + opLatencies[curStaticInst->opClass()];
     }
 
     virtual Counter totalInsts() const

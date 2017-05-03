@@ -39,8 +39,6 @@
 #include "params/FUDesc.hh"
 #include "params/OpDesc.hh"
 #include "sim/sim_object.hh"
-/* by shen */
-#include "cpu/o3/fu_pool.hh"
 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -90,7 +88,6 @@ class FuncUnit
     static unsigned opLatencies[Num_OpClasses];
     bool pipelined[Num_OpClasses];
     std::bitset<Num_OpClasses> capabilityList;
-    friend class FUPool;
 
   public:
     FuncUnit();

@@ -127,6 +127,8 @@ BaseSimpleCPU::BaseSimpleCPU(BaseSimpleCPUParams *p)
 
     fetchOffset = 0;
     stayAtPC = false;
+    /* init option latencies, by shen */
+    initLat();
 }
 
 BaseSimpleCPU::~BaseSimpleCPU()
