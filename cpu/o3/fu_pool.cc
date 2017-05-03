@@ -72,10 +72,11 @@ FUPool::FUIdxQueue::getFU()
 
 FUPool::~FUPool()
 {
-    for (int i = 0; i < Num_OpClasses; ++i) {
-        std::cout << " class_" << i << "_cycle_" << FuncUnit::opLatencies[i];
-    }
     fuListIterator i = funcUnits.begin();
+
+    for (int f = 0; f < Num_OpClasses; ++f) {
+        std::cout << " class_" << f << "_cycle_" << i->opLatency(f);
+    }
     fuListIterator end = funcUnits.end();
     for (; i != end; ++i)
         delete *i;
