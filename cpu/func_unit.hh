@@ -40,7 +40,7 @@
 #include "params/OpDesc.hh"
 #include "sim/sim_object.hh"
 /* by shen */
-#include "fu_pool.hh"
+#include "cpu/o3/fu_pool.hh"
 
 ////////////////////////////////////////////////////////////////////////////
 //
