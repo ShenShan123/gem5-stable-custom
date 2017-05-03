@@ -107,6 +107,4 @@ class FuncUnit
     bool isPipelined(OpClass capability);
 };
 
-unsigned FuncUnit::opLatencies[Num_OpClasses];
-
 #endif // __FU_POOL_HH__

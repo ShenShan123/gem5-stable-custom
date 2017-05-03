@@ -40,6 +40,8 @@ using namespace std;
 //
 //  The funciton unit
 //
+unsigned FuncUnit::opLatencies[Num_OpClasses];
+
 FuncUnit::FuncUnit()
 {
     capabilityList.reset();
